@@ -9,9 +9,18 @@ namespace RpgCombatKata
     public class CombatEncounter
     {
         private readonly IList<Character> _characters;
+        private readonly Random dice = new();
         public CombatEncounter(IList<Character> characters)
         {
             _characters = characters;
+        }
+
+        public void DetermineOrder()
+        {
+            foreach (var character in _characters)
+            {
+
+            }
         }
 
     }
