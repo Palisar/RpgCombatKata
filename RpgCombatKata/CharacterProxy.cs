@@ -14,14 +14,34 @@ namespace RpgCombatKata
         {
             this._character = character;
         }
+        public string Name => _character.Name;
         public int MaxHP => _character.MaxHP;
         public int Health => _character.Health;
         public int Level => _character.Level;
         public bool IsAlive => _character.IsAlive;
 
+        public void Attack(CharacterProxy target, int dmg)
+        {
+            if (target.IsAlive && target != this)
+            {
+                if (target.Level - 5 >= this.Level)
+                {
+                    target.TakeDamage(dmg / 2);
+                }
+                else if (target.Level + 5 <= this.Level)
+                {
+                    target.TakeDamage(dmg + (dmg / 2));
+                }
+                else
+                {
+                    target.TakeDamage(dmg);
+                }
+            }
+        }
+
         public void TakeDamage(int dmg)
         {
-            if ((Health - dmg) < 0)
+            if (Health - dmg < 0)
             {
                 _character.Health = 0;
                 Faint();
@@ -36,24 +56,28 @@ namespace RpgCombatKata
         {
             _character.IsAlive = false;
         }
-        public int CastHeal(CharacterProxy character, int heal)
+
+        public void CastHeal(CharacterProxy target, int heal)
         {
-            if (character.IsAlive)
-                return heal;
-            else 
-                return 0;
+            if (target.IsAlive && target == this)
+                target.RecieveHealing(heal);
         }
-        public void RecieveHealing(CharacterProxy character, int heal)
+
+        public void RecieveHealing(int heal)
         {
-            if (character.Health + heal < character.MaxHP)
+            if (_character.Health + heal > _character.MaxHP)
             {
-                _character.Health = character.MaxHP;
+                _character.Health = _character.MaxHP;
             }
             else
             {
                 _character.Health += heal;
             }
         }
+
+        public void LevelUp()
+        {
+            _character.Level++;
+        }
     }
-}
 }
