@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RpgCombatKata.Engines.Combat;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,13 +16,30 @@ namespace RpgCombatKata
             _characters = characters;
         }
 
-        public void DetermineOrder()
-        {
-            foreach (var character in _characters)
-            {
-
-            }
-        }
-
+        //public void StartCombat()
+        //{
+        //    bool encounterOver = false;
+        //    while (!encounterOver)
+        //    {
+        //        foreach (var character in _characters)
+        //        {
+        //            Console.WriteLine($"What will {character.Name} do?");
+        //            Console.WriteLine(character.ToString());
+        //            char key = Console.ReadKey(true).KeyChar;
+        //            switch (char.ToLower(key))
+        //            {
+        //                case 'a':
+        //                    //attack
+        //                    break;
+        //                case 'h':
+        //                    //heal
+        //                    break;
+        //                default:
+        //                    Console.WriteLine("Turn Skipped");
+        //                    break;
+        //            }
+        //        }
+        //    }
+        //}
     }
 }
