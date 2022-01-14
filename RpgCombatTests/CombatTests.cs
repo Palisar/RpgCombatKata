@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RpgCombatKata.Engines.Combat;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,113 +9,181 @@ namespace RpgTests
 {
     public class CombatTests
     {
-        private Random dice = new Random();
-        private Character hero = new Character("Hero");
-        private Character villan = new Character("Villan");
+        private Random dice = new();
+        private readonly Character heroM = new("Hero", CombatType.Melee);
+        private readonly Character villanR = new("Villan", CombatType.Ranged);
         [Fact]
         public void Attack()
         {
-            CharacterProxy heroProxy = new CharacterProxy(hero);
-            CharacterProxy villanProxy = new CharacterProxy(villan);
+            CharacterProxy heroProxy = new(heroM);
+            CharacterProxy villanProxy = new(villanR);
             var attack = dice.Next(1, 7);
 
-            heroProxy.Attack(villanProxy, attack);
-            villan.Health.Should().Be(villan.MaxHP - attack);
+            heroProxy.Attack(villanProxy, attack, heroProxy);
+            villanR.HP.Should().Be(villanR.MaxHP - attack);
         }
 
         [Fact]
         public void KillCharacter()
         {
-            CharacterProxy heroProxy = new CharacterProxy(hero);
-            CharacterProxy villanProxy = new CharacterProxy(villan);
-            
-            heroProxy.Attack(villanProxy, 1001);
+            CharacterProxy heroProxy = new(heroM);
+            CharacterProxy villanProxy = new(villanR);
 
-            villan.IsAlive.Should().BeFalse();
+            heroProxy.Attack(villanProxy, 1001, heroProxy);
+
+            villanR.IsAlive.Should().BeFalse();
         }
 
         [Fact]
         public void HealCharacter()
         {
-            CharacterProxy heroProxy = new CharacterProxy(hero);
-            CharacterProxy villanProxy = new CharacterProxy(villan);
-            
-            heroProxy.Attack(villanProxy, 12);
+            CharacterProxy heroProxy = new(heroM);
+            CharacterProxy villanProxy = new(villanR);
+
+            heroProxy.Attack(villanProxy, 12, heroProxy);
             villanProxy.CastHeal(villanProxy, 6);
 
-            villan.Health.Should().Be(994);
+            villanR.HP.Should().Be(994);
         }
         [Fact]
         public void LevelUp()
         {
-            CharacterProxy heroProxy = new CharacterProxy(hero);
+            CharacterProxy heroProxy = new(heroM);
             heroProxy.LevelUp();
             heroProxy.LevelUp();
-            hero.Level.Should().Be(3);
+            heroM.Level.Should().Be(3);
         }
 
         [Fact]
         public void AttackLowerLevel()
         {
-            CharacterProxy heroProxy = new CharacterProxy(hero);
-            CharacterProxy villanProxy = new CharacterProxy(villan);
+            CharacterProxy heroProxy = new (heroM);
+            CharacterProxy villanProxy = new (villanR);
 
             for (int i = 0; i < 5; i++)
             {
                 heroProxy.LevelUp();
             }
 
-            heroProxy.Attack(villanProxy, 12);
-            villan.Health.Should().Be(982);
+            heroProxy.Attack(villanProxy, 12, heroProxy);
+            villanR.HP.Should().Be(982);
         }
 
         [Fact]
         public void AttackHigherLevel()
         {
-            CharacterProxy heroProxy = new CharacterProxy(hero);
-            CharacterProxy villanProxy = new CharacterProxy(villan);
+            CharacterProxy heroProxy = new (heroM);
+            CharacterProxy villanProxy = new (villanR);
 
             for (int i = 0; i < 5; i++)
             {
                 villanProxy.LevelUp();
             }
 
-            heroProxy.Attack(villanProxy, 12);
-            villan.Health.Should().Be(994);
+            heroProxy.Attack(villanProxy, 12, heroProxy);
+            villanR.HP.Should().Be(994);
         }
 
         [Fact]
         public void AttackHigherLevelOddNumber()
         {
-            CharacterProxy heroProxy = new CharacterProxy(hero);
-            CharacterProxy villanProxy = new CharacterProxy(villan);
+            CharacterProxy heroProxy = new (heroM);
+            CharacterProxy villanProxy = new (villanR);
 
             for (int i = 0; i < 5; i++)
             {
                 villanProxy.LevelUp();
             }
 
-            heroProxy.Attack(villanProxy, 13);
-            villan.Health.Should().Be(994);
+            heroProxy.Attack(villanProxy, 13, heroProxy);
+            villanR.HP.Should().Be(994);
         }
 
         [Fact]
         public void CantAttackSelf()
         {
-            CharacterProxy heroProxy = new CharacterProxy(hero);
-            heroProxy.Attack(heroProxy, 13);
+            CharacterProxy heroProxy = new (heroM);
+            heroProxy.Attack(heroProxy, 13, heroProxy);
 
-            hero.Health.Should().Be(hero.MaxHP);
+            heroM.HP.Should().Be(heroM.MaxHP);
         }
 
         [Fact]
         public void CanOnlyHealSelf()
         {
-            CharacterProxy heroProxy = new CharacterProxy(hero);
-            CharacterProxy villanProxy = new CharacterProxy(villan);
-            heroProxy.Attack(villanProxy, 13);
-            
-            villan.Health.Should().Be(987);
+            CharacterProxy heroProxy = new (heroM);
+            CharacterProxy villanProxy = new (villanR);
+            heroProxy.Attack(villanProxy, 13, heroProxy);
+
+            villanR.HP.Should().Be(987);
+        }
+
+        [Fact]
+        public void AttactAtRangeMelee()
+        {
+            CharacterProxy heroProxy = new (heroM);
+            CharacterProxy villanProxy = new (villanR);
+
+            var combat = new MeleeCombatRule(heroProxy, villanProxy);
+
+            if (combat.CanReach())
+            {
+                combat.MakeAttack(13);
+            }
+
+            villanR.HP.Should().Be(987);
+        }
+
+        [Fact]
+        public void CantReachMelee()
+        {
+            CharacterProxy heroProxy = new CharacterProxy(heroM);
+            CharacterProxy villanProxy = new CharacterProxy(villanR);
+            heroProxy.SetPosition(0, 1);
+            villanProxy.SetPosition(5, 6);
+
+            var combat = new MeleeCombatRule(heroProxy, villanProxy);
+            if (combat.CanReach())
+            {
+                combat.MakeAttack(13);
+            }
+
+            villanR.HP.Should().Be(villanProxy.MaxHP);
+        }
+
+        [Fact]
+        public void AttackAtLongRange()
+        {
+
+            CharacterProxy heroProxy = new CharacterProxy(heroM);
+            CharacterProxy villanProxy = new CharacterProxy(villanR);
+            heroProxy.SetPosition(0, 1);
+            villanProxy.SetPosition(5, 6);
+
+            var combat = new RangedCombatRule(villanProxy, heroProxy);
+            if (combat.CanReach())
+            {
+                combat.MakeAttack(13);
+            }
+
+            heroM.HP.Should().Be(987);
+        }
+
+        [Fact]
+        public void CantReachRange()
+        {
+            CharacterProxy heroProxy = new CharacterProxy(heroM);
+            CharacterProxy villanProxy = new CharacterProxy(villanR);
+            heroProxy.SetPosition(0, 1);
+            villanProxy.SetPosition(20, 6);
+
+            var combat = new RangedCombatRule(villanProxy, heroProxy);
+            if (combat.CanReach())
+            {
+                combat.MakeAttack(13);
+            }
+
+            heroM.HP.Should().Be(heroM.MaxHP);
         }
     }
 }
