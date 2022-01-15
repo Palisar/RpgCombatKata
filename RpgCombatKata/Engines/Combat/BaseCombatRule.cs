@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RpgCombatKata.Engines.Combat
 {
-    public abstract class BaseCombatRule : BaseRule
+    public abstract class BaseCombatRule
     {
         protected readonly CharacterProxy attacker;
         protected readonly CharacterProxy target;
@@ -16,20 +16,13 @@ namespace RpgCombatKata.Engines.Combat
             this.attacker = attacker;
             this.target = target;
         }
+        public abstract bool IsInRange();
 
-        public override bool CanReach()
-        {
-            return false;
-        }
+        public abstract void MakeAction(int amount);
 
-        public override bool IsInRangeCheck()
+        public bool IsAlly()
         {
-            return false;
-        }
-
-        public void MakeAttack(int dmg)
-        {
-            attacker.Attack(target, dmg, attacker);
+            return attacker.Factions.Intersect(target.Factions).Any();
         }
     }
 }
