@@ -8,6 +8,11 @@ namespace RpgCombatKata.Engines.Combat
 {
     public class MeleeCombatRule : BaseCombatRule
     {
+        /// <summary>
+        /// Creates a rule for solving melee combat situations.
+        /// </summary>
+        /// <param name="attacker">The person who is making the attack.</param>
+        /// <param name="target">The target of the attack.</param>
         public MeleeCombatRule(CharacterProxy attacker, CharacterProxy target) : base(attacker, target)
         {
         }

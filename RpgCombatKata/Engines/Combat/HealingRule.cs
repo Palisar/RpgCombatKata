@@ -8,6 +8,11 @@ namespace RpgCombatKata.Engines.Combat
 {
     public class HealingRule : BaseCombatRule
     {
+        /// <summary>
+        /// Creates a rule for solving melee combat situations.
+        /// </summary>
+        /// <param name="attacker">The person who is casting the heal.</param>
+        /// <param name="target">The target that recieves the heal.</param>
         public HealingRule(CharacterProxy attacker, CharacterProxy target) : base(attacker, target)
         {
         }

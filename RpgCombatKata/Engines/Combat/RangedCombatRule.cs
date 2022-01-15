@@ -8,6 +8,11 @@ namespace RpgCombatKata.Engines.Combat
 {
     public class RangedCombatRule : BaseCombatRule
     {
+        /// <summary>
+        /// Creates a rule for solving ranged combat situations.
+        /// </summary>
+        /// <param name="attacker">The person who is making the attack.</param>
+        /// <param name="target">The target of the attack.</param>
         public RangedCombatRule(CharacterProxy attacker, CharacterProxy target) : base(attacker, target)
         {
         }
