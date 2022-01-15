@@ -9,7 +9,7 @@ namespace RpgCombatKata
     public enum Factions
     {
         Warfarts,
-        Pizzers
+        Plops
     }
     public abstract class BaseFaction
     {
