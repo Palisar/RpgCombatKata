@@ -137,8 +137,8 @@ namespace RpgTests
         [Fact]
         public void CantReachMelee()
         {
-            CharacterProxy heroProxy = new CharacterProxy(heroM);
-            CharacterProxy villanProxy = new CharacterProxy(villanR);
+            CharacterProxy heroProxy = new (heroM);
+            CharacterProxy villanProxy = new (villanR);
             heroProxy.SetPosition(0, 1);
             villanProxy.SetPosition(5, 6);
 
@@ -155,8 +155,8 @@ namespace RpgTests
         public void AttackAtLongRange()
         {
 
-            CharacterProxy heroProxy = new CharacterProxy(heroM);
-            CharacterProxy villanProxy = new CharacterProxy(villanR);
+            CharacterProxy heroProxy = new (heroM);
+            CharacterProxy villanProxy = new (villanR);
             heroProxy.SetPosition(0, 1);
             villanProxy.SetPosition(5, 6);
 
@@ -172,8 +172,8 @@ namespace RpgTests
         [Fact]
         public void CantReachRange()
         {
-            CharacterProxy heroProxy = new CharacterProxy(heroM);
-            CharacterProxy villanProxy = new CharacterProxy(villanR);
+            CharacterProxy heroProxy = new (heroM);
+            CharacterProxy villanProxy = new (villanR);
             heroProxy.SetPosition(0, 1);
             villanProxy.SetPosition(20, 6);
 

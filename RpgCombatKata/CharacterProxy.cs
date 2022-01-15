@@ -23,6 +23,9 @@ namespace RpgCombatKata
         public CombatType Type => _character.Type;
         public int Initive => _character.Inititive;
 
+
+        //Methods are the acitons a character can take.
+
         public void Attack(CharacterProxy target, int dmg, CharacterProxy attacker)
         {
             if (target.IsAlive && target != attacker)
@@ -51,7 +54,7 @@ namespace RpgCombatKata
             }
             else
             {
-                _character.HP -= dmg;
+                _character.HP -= Math.Abs(dmg);
             }
         }
 
@@ -75,7 +78,7 @@ namespace RpgCombatKata
             }
             else
             {
-                _character.HP += heal;
+                _character.HP += Math.Abs(heal);
             }
         }
 
