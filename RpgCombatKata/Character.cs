@@ -26,6 +26,7 @@ namespace RpgCombatKata
             this.Name = name;
             this.Type = type;
         }
+        public HashSet<Factions> Factions { get; set; } = new HashSet<Factions>();
 
         public override string ToString()
         {

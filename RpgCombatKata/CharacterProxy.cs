@@ -23,9 +23,18 @@ namespace RpgCombatKata
         public CombatType Type => _character.Type;
         public int Initive => _character.Inititive;
 
+        public HashSet<Factions> Factions => _character.Factions;
+        
+        //General Methods for anywhere use.
+        #region General
+        public void LevelUp()
+        {
+            _character.Level++;
+        }
+        #endregion
 
-        //Methods are the acitons a character can take.
-
+        //Methods are the acitons a character can take in combat.
+        #region Combat
         public void Attack(CharacterProxy target, int dmg, CharacterProxy attacker)
         {
             if (target.IsAlive && target != attacker)
@@ -66,8 +75,7 @@ namespace RpgCombatKata
 
         public void CastHeal(CharacterProxy target, int heal)
         {
-            if (target.IsAlive && target == this)
-                target.RecieveHealing(heal);
+            target.RecieveHealing(heal);
         }
 
         public void RecieveHealing(int heal)
@@ -81,12 +89,6 @@ namespace RpgCombatKata
                 _character.HP += Math.Abs(heal);
             }
         }
-
-        public void LevelUp()
-        {
-            _character.Level++;
-        }
-
         public void RollInititive(int diceRoll)
         {
             _character.Inititive = diceRoll;
@@ -94,7 +96,20 @@ namespace RpgCombatKata
 
         public void SetPosition(int x, int y)
         {
-            _character.Position = new Position(x,y);
+            _character.Position = new Position(x, y);
         }
+        #endregion Combat 
+
+        //Methods Connected to factions.
+        #region Faction
+        public void JoinFaction(Factions faction)
+        {
+            _character.Factions.Add(faction);
+        }
+        public void LeaveFaciton(Factions faction)
+        {
+            _character.Factions.Remove(faction);
+        }
+        #endregion
     }
 }
