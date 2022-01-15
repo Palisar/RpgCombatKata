@@ -11,6 +11,7 @@ namespace RpgTests
     {
         private Random dice = new();
         private readonly Character heroM = new("Hero", CombatType.Melee);
+        private readonly Character sideKickM = new("SideKick", CombatType.Melee);
         private readonly Character villanR = new("Villan", CombatType.Ranged);
         [Fact]
         public void Attack()
@@ -57,8 +58,8 @@ namespace RpgTests
         [Fact]
         public void AttackLowerLevel()
         {
-            CharacterProxy heroProxy = new (heroM);
-            CharacterProxy villanProxy = new (villanR);
+            CharacterProxy heroProxy = new(heroM);
+            CharacterProxy villanProxy = new(villanR);
 
             for (int i = 0; i < 5; i++)
             {
@@ -72,8 +73,8 @@ namespace RpgTests
         [Fact]
         public void AttackHigherLevel()
         {
-            CharacterProxy heroProxy = new (heroM);
-            CharacterProxy villanProxy = new (villanR);
+            CharacterProxy heroProxy = new(heroM);
+            CharacterProxy villanProxy = new(villanR);
 
             for (int i = 0; i < 5; i++)
             {
@@ -87,8 +88,8 @@ namespace RpgTests
         [Fact]
         public void AttackHigherLevelOddNumber()
         {
-            CharacterProxy heroProxy = new (heroM);
-            CharacterProxy villanProxy = new (villanR);
+            CharacterProxy heroProxy = new(heroM);
+            CharacterProxy villanProxy = new(villanR);
 
             for (int i = 0; i < 5; i++)
             {
@@ -102,7 +103,7 @@ namespace RpgTests
         [Fact]
         public void CantAttackSelf()
         {
-            CharacterProxy heroProxy = new (heroM);
+            CharacterProxy heroProxy = new(heroM);
             heroProxy.Attack(heroProxy, 13, heroProxy);
 
             heroM.HP.Should().Be(heroM.MaxHP);
@@ -111,8 +112,8 @@ namespace RpgTests
         [Fact]
         public void CanOnlyHealSelf()
         {
-            CharacterProxy heroProxy = new (heroM);
-            CharacterProxy villanProxy = new (villanR);
+            CharacterProxy heroProxy = new(heroM);
+            CharacterProxy villanProxy = new(villanR);
             heroProxy.Attack(villanProxy, 13, heroProxy);
 
             villanR.HP.Should().Be(987);
@@ -121,15 +122,12 @@ namespace RpgTests
         [Fact]
         public void AttactAtRangeMelee()
         {
-            CharacterProxy heroProxy = new (heroM);
-            CharacterProxy villanProxy = new (villanR);
+            CharacterProxy heroProxy = new(heroM);
+            CharacterProxy villanProxy = new(villanR);
 
             var combat = new MeleeCombatRule(heroProxy, villanProxy);
 
-            if (combat.CanReach())
-            {
-                combat.MakeAttack(13);
-            }
+            combat.MakeAction(13);
 
             villanR.HP.Should().Be(987);
         }
@@ -137,16 +135,14 @@ namespace RpgTests
         [Fact]
         public void CantReachMelee()
         {
-            CharacterProxy heroProxy = new (heroM);
-            CharacterProxy villanProxy = new (villanR);
+            CharacterProxy heroProxy = new(heroM);
+            CharacterProxy villanProxy = new(villanR);
             heroProxy.SetPosition(0, 1);
             villanProxy.SetPosition(5, 6);
 
             var combat = new MeleeCombatRule(heroProxy, villanProxy);
-            if (combat.CanReach())
-            {
-                combat.MakeAttack(13);
-            }
+
+            combat.MakeAction(13);
 
             villanR.HP.Should().Be(villanProxy.MaxHP);
         }
@@ -155,16 +151,13 @@ namespace RpgTests
         public void AttackAtLongRange()
         {
 
-            CharacterProxy heroProxy = new (heroM);
-            CharacterProxy villanProxy = new (villanR);
+            CharacterProxy heroProxy = new(heroM);
+            CharacterProxy villanProxy = new(villanR);
             heroProxy.SetPosition(0, 1);
             villanProxy.SetPosition(5, 6);
 
             var combat = new RangedCombatRule(villanProxy, heroProxy);
-            if (combat.CanReach())
-            {
-                combat.MakeAttack(13);
-            }
+            combat.MakeAction(13);
 
             heroM.HP.Should().Be(987);
         }
@@ -172,18 +165,54 @@ namespace RpgTests
         [Fact]
         public void CantReachRange()
         {
-            CharacterProxy heroProxy = new (heroM);
-            CharacterProxy villanProxy = new (villanR);
+            CharacterProxy heroProxy = new(heroM);
+            CharacterProxy villanProxy = new(villanR);
             heroProxy.SetPosition(0, 1);
             villanProxy.SetPosition(20, 6);
 
             var combat = new RangedCombatRule(villanProxy, heroProxy);
-            if (combat.CanReach())
-            {
-                combat.MakeAttack(13);
-            }
+            combat.MakeAction(13);
 
             heroM.HP.Should().Be(heroM.MaxHP);
+        }
+
+        [Fact]
+        public void CanHealAlly()
+        {
+            CharacterProxy heroProxy = new(heroM);
+            CharacterProxy sideKickProxy = new(sideKickM);
+            CharacterProxy villanProxy = new(villanR);
+
+            heroProxy.JoinFaction(Factions.Plops);
+            sideKickProxy.JoinFaction(Factions.Plops);
+
+            var combact = new RangedCombatRule(villanProxy, sideKickProxy);
+            combact.MakeAction(10);
+
+            var healing = new HealingRule(heroProxy, sideKickProxy);
+            healing.MakeAction(2);
+
+            sideKickM.HP.Should().Be(992);
+        }
+
+        [Fact]
+        public void CantHealEnemy()
+        {
+            CharacterProxy heroProxy = new(heroM);
+            CharacterProxy sideKickProxy = new(sideKickM);
+            CharacterProxy villanProxy = new(villanR);
+
+            heroProxy.JoinFaction(Factions.Plops);
+            sideKickProxy.JoinFaction(Factions.Plops);
+            villanProxy.JoinFaction(Factions.Warfarts);
+
+            var combact = new MeleeCombatRule(heroProxy, villanProxy);
+            combact.MakeAction(10);
+
+            var healing = new HealingRule(heroProxy, villanProxy);
+            healing.MakeAction(2);
+
+            villanR.HP.Should().Be(990);
         }
     }
 }
