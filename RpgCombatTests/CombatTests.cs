@@ -1,15 +1,11 @@
 ﻿using RpgCombatKata.Engines.Combat;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RpgTests
 {
     public class CombatTests
     {
-        private Random dice = new();
+        private readonly Random dice = new();
         private readonly Character heroM = new("Hero", CombatType.Melee);
         private readonly Character sideKickM = new("SideKick", CombatType.Melee);
         private readonly Character villanR = new("Villan", CombatType.Ranged);
@@ -50,8 +46,10 @@ namespace RpgTests
         public void LevelUp()
         {
             CharacterProxy heroProxy = new(heroM);
+
             heroProxy.LevelUp();
             heroProxy.LevelUp();
+
             heroM.Level.Should().Be(3);
         }
 
@@ -213,6 +211,21 @@ namespace RpgTests
             healing.MakeAction(2);
 
             villanR.HP.Should().Be(990);
+        }
+
+        [Fact]
+        public void CantAttackAlly()
+        {
+            CharacterProxy heroProxy = new(heroM);
+            CharacterProxy sideKickProxy = new(sideKickM);
+            
+            heroProxy.JoinFaction(Factions.Plops);
+            sideKickProxy.JoinFaction(Factions.Plops);
+
+            var combact = new MeleeCombatRule(heroProxy, sideKickProxy);
+            combact.MakeAction(10);
+
+            sideKickM.HP.Should().Be(sideKickM.MaxHP);
         }
     }
 }
