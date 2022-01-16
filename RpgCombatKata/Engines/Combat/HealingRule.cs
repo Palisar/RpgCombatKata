@@ -23,7 +23,6 @@ namespace RpgCombatKata.Engines.Combat
             var squareYs = Math.Abs(Math.Pow((base.attacker.Position.Y - base.target.Position.Y), 2));
 
             return Math.Sqrt(squareYs + squareXs) <= 50;
-                
         }
 
         public override void MakeAction(int amount)
