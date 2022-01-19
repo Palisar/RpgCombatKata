@@ -9,12 +9,19 @@ namespace RpgCombatKata
     public enum Factions
     {
         Warfarts,
-        Plops
+        Plops,
+        None
     }
     public abstract class BaseFaction
     {
         public Factions Type { get; set; }
-        public string? Name { get; set; }
+        public string Name
+        {
+            get
+            {
+                return Type.ToString();
+            }
+        }
         public List<Character>? Members { get; set; }
 
         public abstract void AddMembers();
