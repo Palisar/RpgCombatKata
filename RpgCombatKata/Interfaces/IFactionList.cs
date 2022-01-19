@@ -6,12 +6,8 @@ using System.Threading.Tasks;
 
 namespace RpgCombatKata.Interfaces
 {
-    public interface ITakeDamage
+    public interface IFactionList
     {
-        public int MaxHP { get;}
-        public int HP { get;}
-        bool IsAlive { get; }
-
-        public void TakeDamage(int dmg);
+        public HashSet<Factions> Factions { get; }
     }
 }
