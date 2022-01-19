@@ -2,8 +2,10 @@
 {
     public enum CombatType
     {
+        None,
         Melee,
-        Ranged
+        Ranged,
+        Healer,
     }
     public class Character
     {
