@@ -6,31 +6,27 @@ using System.Threading.Tasks;
 
 namespace RpgCombatKata.Engines.Combat
 {
-    public class HealingRule : BaseCombatRule
+    public class HealingRule : BaseRule
     {
-        /// <summary>
-        /// Creates a rule for solving melee combat situations.
-        /// </summary>
-        /// <param name="attacker">The person who is casting the heal.</param>
-        /// <param name="target">The target that recieves the heal.</param>
-        public HealingRule(CharacterProxy attacker, CharacterProxy target) : base(attacker, target)
+        public override void MakeAction(ICombatant healer, ICombatant target, int amount)
         {
-        }
-        public override bool IsInRange()
-        {
-            //formula finds the distance between 2 points 
-            var squareXs = Math.Abs(Math.Pow((base.attacker.Position.X - base.target.Position.X), 2));
-            var squareYs = Math.Abs(Math.Pow((base.attacker.Position.Y - base.target.Position.Y), 2));
-
-            return Math.Sqrt(squareYs + squareXs) <= 50;
-        }
-
-        public override void MakeAction(int amount)
-        {
-            if (IsAlly() && target.IsAlive)
+            if (!healer.IsAllyOf(target))
             {
-                attacker.CastHeal(target, amount);
+                Console.WriteLine("You can only heal your allies!");
             }
+            else if (!target.IsInRangeOf(healer, 30))
+            {
+                Console.WriteLine("Target must be in range!");
+            }
+            else
+            {
+                healer.CastHeal(target, amount);
+            }
+        }
+
+        public override bool IsMatch(ICombatant healer)
+        {
+            return healer.Type == CombatType.Healer;
         }
     }
 }
