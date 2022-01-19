@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RpgCombatKata
 {
-    public class GameObject : ITakeDamage, IHealthBar
+    public class GameObject 
     {
         public GameObject(string name, int maxHP)
         {
@@ -18,13 +18,9 @@ namespace RpgCombatKata
         public int MaxHP { get; set; }
         public int HP { get; set; }
         public bool IsAlive { get; set; } = true;
-        public void TakeDamage(int dmg)
-        {
-            HP -= dmg;
-            if (HP <= 0)
-            {
-                IsAlive = false;
-            }
-        }
+        public HashSet<Factions> Factions { get; } = new HashSet<Factions>();
+        public int Level { get; set; }
+
+        public Position Position { get; set; }
     }
 }

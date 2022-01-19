@@ -26,7 +26,18 @@ namespace RpgCombatKata.Engines.Combat
 
         public static bool IsAllyOf(this ICombatant attacker, ICombatant target)
         {
-            return target.Factions.Intersect(attacker.Factions).Any();
+            if (target.Factions.Intersect(attacker.Factions).Any())
+            {
+                return true;
+            }
+            else if (attacker.Factions.Count == 0)
+            {
+                return false;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }
