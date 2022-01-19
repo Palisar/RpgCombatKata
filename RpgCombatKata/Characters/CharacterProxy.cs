@@ -1,6 +1,6 @@
 ﻿namespace RpgCombatKata
 {
-    public class CharacterProxy : ITakeDamage, ICanBeHealed
+    public class CharacterProxy : ICombatant
     {
         private readonly Character _character;
 
@@ -28,25 +28,6 @@
         #endregion
 
         //Methods are the acitons a character can take in combat.
-        #region Combat
-        public void Attack(CharacterProxy target, int dmg, CharacterProxy attacker)
-        {
-            if (target.IsAlive && target != attacker)
-            {
-                if (target.Level - 5 >= attacker.Level)
-                {
-                    target.TakeDamage(dmg / 2);
-                }
-                else if (target.Level + 5 <= attacker.Level)
-                {
-                    target.TakeDamage(dmg + (dmg / 2));
-                }
-                else
-                {
-                    target.TakeDamage(dmg);
-                }
-            }
-        }
 
         public void TakeDamage(int dmg)
         {
@@ -63,14 +44,11 @@
 
         public void Faint()
         {
-            Console.WriteLine($"{this.Name} has fainted!" );
+            Console.WriteLine($"{this.Name} has fainted!");
             _character.IsAlive = false;
         }
 
-        public void CastHeal(CharacterProxy target, int heal)
-        {
-            target.RecieveHealing(heal);
-        }
+        
 
         public void RecieveHealing(int heal)
         {
@@ -83,16 +61,16 @@
                 _character.HP += Math.Abs(heal);
             }
         }
-        public void RollInititive(int diceRoll)
+        public void RollInititive(int modifier)
         {
-            _character.Inititive = diceRoll;
+            Random dice = new();
+            _character.Inititive = dice.Next(1,20) + modifier;
         }
 
         public void SetPosition(int x, int y)
         {
             _character.Position = new Position(x, y);
-        }
-        #endregion Combat 
+        }        
 
         //Methods Connected to factions.
         #region Faction
