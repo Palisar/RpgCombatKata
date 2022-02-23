@@ -1,16 +1,16 @@
 ﻿namespace RpgCombatKata
 {
-    public class CharacterProxy : ICombatant
+    public class CharacterCombatProxy : ICombatant
     {
         private readonly Character _character;
 
-        public CharacterProxy(Character character)
+        public CharacterCombatProxy(Character character)
         {
             this._character = character;
         }
         public string Name => _character.Name;
-        public int MaxHP => _character.MaxHP;
-        public int HP => _character.HP;
+        public int MaxHP => _character.MaxHitPoints;
+        public int HP => _character.HitPoints;
         public int Level => _character.Level;
         public bool IsAlive => _character.IsAlive;
         public Position Position => _character.Position; // in meters
@@ -33,12 +33,12 @@
         {
             if (HP - dmg < 0)
             {
-                _character.HP = 0;
+                _character.HitPoints = 0;
                 Faint();
             }
             else
             {
-                _character.HP -= Math.Abs(dmg);
+                _character.HitPoints -= Math.Abs(dmg);
             }
         }
 
@@ -52,13 +52,13 @@
 
         public void RecieveHealing(int heal)
         {
-            if (_character.HP + heal > _character.MaxHP)
+            if (_character.HitPoints + heal > _character.MaxHitPoints)
             {
-                _character.HP = _character.MaxHP;
+                _character.HitPoints = _character.MaxHitPoints;
             }
             else
             {
-                _character.HP += Math.Abs(heal);
+                _character.HitPoints += Math.Abs(heal);
             }
         }
         public void RollInititive(int modifier)
@@ -70,7 +70,7 @@
         public void SetPosition(int x, int y)
         {
             _character.Position = new Position(x, y);
-        }        
+        }
 
         //Methods Connected to factions.
         #region Faction

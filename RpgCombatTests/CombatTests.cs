@@ -1,6 +1,4 @@
-﻿
-
-namespace RpgTests
+﻿namespace RpgTests
 {
     public class CombatTests
     {
@@ -22,20 +20,20 @@ namespace RpgTests
         [Fact]
         public void Attack()
         {
-            CharacterProxy heroProxy = new(melee);
-            CharacterProxy villanProxy = new(villanR);
+            CharacterCombatProxy heroProxy = new(melee);
+            CharacterCombatProxy villanProxy = new(villanR);
             var attack = dice.Next(1, 7);
 
             engine.ApplyRules(heroProxy, villanProxy, attack);
             
-            villanR.HP.Should().Be(villanR.MaxHP - attack);
+            villanR.HitPoints.Should().Be(villanR.MaxHitPoints - attack);
         }
 
         [Fact]
         public void KillCharacter()
         {
-            CharacterProxy heroProxy = new(melee);
-            CharacterProxy villanProxy = new(villanR);
+            CharacterCombatProxy heroProxy = new(melee);
+            CharacterCombatProxy villanProxy = new(villanR);
 
             engine.ApplyRules(heroProxy, villanProxy, 1001);
 
@@ -45,20 +43,20 @@ namespace RpgTests
         [Fact]
         public void HealCharacter()
         {
-            CharacterProxy healerProxy = new(healer);
-            CharacterProxy meleeProxy = new(melee);
+            CharacterCombatProxy healerProxy = new(healer);
+            CharacterCombatProxy meleeProxy = new(melee);
 
             healerProxy.JoinFaction(Factions.Plops);
             meleeProxy.JoinFaction(Factions.Plops);
             meleeProxy.TakeDamage(12);
             engine.ApplyRules(healerProxy, meleeProxy, 2);
 
-            melee.HP.Should().Be(990);
+            melee.HitPoints.Should().Be(990);
         }
         [Fact]
         public void LevelUp()
         {
-            CharacterProxy heroProxy = new(melee);
+            CharacterCombatProxy heroProxy = new(melee);
 
             heroProxy.LevelUp();
             heroProxy.LevelUp();
@@ -69,8 +67,8 @@ namespace RpgTests
         [Fact]
         public void AttackLowerLevel()
         {
-            CharacterProxy heroProxy = new(melee);
-            CharacterProxy villanProxy = new(villanR);
+            CharacterCombatProxy heroProxy = new(melee);
+            CharacterCombatProxy villanProxy = new(villanR);
 
             for (int i = 0; i < 5; i++)
             {
@@ -78,14 +76,14 @@ namespace RpgTests
             }
 
             engine.ApplyRules(heroProxy, villanProxy, 12);
-            villanR.HP.Should().Be(982);
+            villanR.HitPoints.Should().Be(982);
         }
 
         [Fact]
         public void AttackHigherLevel()
         {
-            CharacterProxy heroProxy = new(melee);
-            CharacterProxy villanProxy = new(villanR);
+            CharacterCombatProxy heroProxy = new(melee);
+            CharacterCombatProxy villanProxy = new(villanR);
 
             for (int i = 0; i < 5; i++)
             {
@@ -93,14 +91,14 @@ namespace RpgTests
             }
 
             engine.ApplyRules(heroProxy, villanProxy, 12);
-            villanR.HP.Should().Be(994);
+            villanR.HitPoints.Should().Be(994);
         }
 
         [Fact]
         public void AttackHigherLevelOddNumber()
         {
-            CharacterProxy heroProxy = new(melee);
-            CharacterProxy villanProxy = new(villanR);
+            CharacterCombatProxy heroProxy = new(melee);
+            CharacterCombatProxy villanProxy = new(villanR);
 
             for (int i = 0; i < 5; i++)
             {
@@ -108,88 +106,88 @@ namespace RpgTests
             }
 
             engine.ApplyRules(heroProxy, villanProxy, 13);
-            villanR.HP.Should().Be(994);
+            villanR.HitPoints.Should().Be(994);
         }
 
         [Fact]
         public void CantAttackSelf()
         {
-            CharacterProxy heroProxy = new(melee);
+            CharacterCombatProxy heroProxy = new(melee);
             engine.ApplyRules(heroProxy, heroProxy, 100);
-            melee.HP.Should().Be(melee.MaxHP);
+            melee.HitPoints.Should().Be(melee.MaxHitPoints);
         }
 
         [Fact]
         public void CanOnlyHealAlly()
         {
-            CharacterProxy heroProxy = new(melee);
-            CharacterProxy villanProxy = new(villanR);
-            CharacterProxy healerProxy = new CharacterProxy(healer);
+            CharacterCombatProxy heroProxy = new(melee);
+            CharacterCombatProxy villanProxy = new(villanR);
+            CharacterCombatProxy healerProxy = new CharacterCombatProxy(healer);
 
             heroProxy.JoinFaction(Factions.Plops);
             engine.ApplyRules(heroProxy, villanProxy, 13);
             engine.ApplyRules(healerProxy, villanProxy, 100);
 
-            villanR.HP.Should().Be(987);
+            villanR.HitPoints.Should().Be(987);
         }
 
         [Fact]
         public void AttactAtRangeMelee()
         {
-            CharacterProxy heroProxy = new(melee);
-            CharacterProxy villanProxy = new(villanR);
+            CharacterCombatProxy heroProxy = new(melee);
+            CharacterCombatProxy villanProxy = new(villanR);
 
             engine.ApplyRules(heroProxy, villanProxy, 12);
 
-            villanR.HP.Should().Be(988);
+            villanR.HitPoints.Should().Be(988);
         }
 
         [Fact]
         public void CantReachMelee()
         {
-            CharacterProxy heroProxy = new(melee);
-            CharacterProxy villanProxy = new(villanR);
+            CharacterCombatProxy heroProxy = new(melee);
+            CharacterCombatProxy villanProxy = new(villanR);
             heroProxy.SetPosition(0, 1);
             villanProxy.SetPosition(5, 6);
 
             engine.ApplyRules(heroProxy, villanProxy, 12);
 
-            villanR.HP.Should().Be(villanProxy.MaxHP);
+            villanR.HitPoints.Should().Be(villanProxy.MaxHP);
         }
 
         [Fact]
         public void AttackAtLongRange()
         {
 
-            CharacterProxy heroProxy = new(ranged);
-            CharacterProxy villanProxy = new(villanR);
+            CharacterCombatProxy heroProxy = new(ranged);
+            CharacterCombatProxy villanProxy = new(villanR);
             heroProxy.SetPosition(0, 1);
             villanProxy.SetPosition(5, 6);
 
             engine.ApplyRules(heroProxy, villanProxy, 13);
 
-            villanR.HP.Should().Be(987);
+            villanR.HitPoints.Should().Be(987);
         }
 
         [Fact]
         public void CantReachRange()
         {
-            CharacterProxy heroProxy = new(melee);
-            CharacterProxy villanProxy = new(villanR);
+            CharacterCombatProxy heroProxy = new(melee);
+            CharacterCombatProxy villanProxy = new(villanR);
             heroProxy.SetPosition(0, 1);
             villanProxy.SetPosition(20, 6);
 
             engine.ApplyRules(heroProxy, villanProxy, 12);
 
-            melee.HP.Should().Be(melee.MaxHP);
+            melee.HitPoints.Should().Be(melee.MaxHitPoints);
         }
 
         [Fact]
         public void CanHealAlly()
         {
-            CharacterProxy heroProxy = new(melee);
-            CharacterProxy sideKickProxy = new(healer);
-            CharacterProxy villanProxy = new(villanR);
+            CharacterCombatProxy heroProxy = new(melee);
+            CharacterCombatProxy sideKickProxy = new(healer);
+            CharacterCombatProxy villanProxy = new(villanR);
 
             heroProxy.JoinFaction(Factions.Plops);
             sideKickProxy.JoinFaction(Factions.Plops);
@@ -199,15 +197,15 @@ namespace RpgTests
 
             engine.ApplyRules(sideKickProxy, heroProxy, 2);
 
-            melee.HP.Should().Be(990);
+            melee.HitPoints.Should().Be(990);
         }
 
         [Fact]
         public void CantHealEnemy()
         {
-            CharacterProxy heroProxy = new(melee);
-            CharacterProxy sideKickProxy = new(healer);
-            CharacterProxy villanProxy = new(villanR);
+            CharacterCombatProxy heroProxy = new(melee);
+            CharacterCombatProxy sideKickProxy = new(healer);
+            CharacterCombatProxy villanProxy = new(villanR);
 
             heroProxy.JoinFaction(Factions.Plops);
             sideKickProxy.JoinFaction(Factions.Plops);
@@ -217,21 +215,21 @@ namespace RpgTests
 
             engine.ApplyRules(sideKickProxy, villanProxy, 12);
 
-            villanR.HP.Should().Be(990);
+            villanR.HitPoints.Should().Be(990);
         }
 
         [Fact]
         public void CantAttackAlly()
         {
-            CharacterProxy heroProxy = new(melee);
-            CharacterProxy sideKickProxy = new(ranged);
+            CharacterCombatProxy heroProxy = new(melee);
+            CharacterCombatProxy sideKickProxy = new(ranged);
             
             heroProxy.JoinFaction(Factions.Plops);
             sideKickProxy.JoinFaction(Factions.Plops);
 
             engine.ApplyRules(heroProxy, sideKickProxy, 12);
 
-            ranged.HP.Should().Be(ranged.MaxHP);
+            ranged.HitPoints.Should().Be(ranged.MaxHitPoints);
         }
     }
 }

@@ -11,7 +11,7 @@ namespace RpgTests
             var tree = new GameObject("tree", 100);
             var treeProxy = new ObjectProxy(tree);
             Character heroM = new("Hero", CombatType.Melee);
-            var proxy = new CharacterProxy(heroM);
+            var proxy = new CharacterCombatProxy(heroM);
             var engine = new CombatRulesEngine.Builder()
                 .WithMeleeCombatRule()
                 .Build();
